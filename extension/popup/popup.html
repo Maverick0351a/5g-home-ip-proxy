@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>5G Home IP Rotator &amp; Proxy Switcher</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="header">
+    <div>
+      <h1>5G Home IP &amp; Proxy</h1>
+      <p class="subtitle">Hardened 5G / Xfinity Switcher &amp; Red-Team Control</p>
+    </div>
+    <span id="daemonBadge" class="status-pill offline">Checking...</span>
+  </header>
+
+  <section class="card">
+    <div class="metric-row">
+      <div>
+        <span class="label">Public WAN IP</span>
+        <div id="wanIpDisplay" class="mono-value">--</div>
+      </div>
+      <div class="right">
+        <span class="label">Bound Interface IP</span>
+        <div id="sourceIpDisplay" class="mono-value">--</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="metric-row">
+      <span class="section-title">Browser Routing Mode</span>
+      <span id="webrtcBadge" class="hint">WebRTC: Standard</span>
+    </div>
+    <div class="mode-group" role="group" aria-label="Proxy Routing Mode">
+      <button type="button" class="mode-btn" data-mode="direct">Direct</button>
+      <button type="button" class="mode-btn" data-mode="5g_proxy">5G Proxy (:8888)</button>
+      <button type="button" class="mode-btn" data-mode="burp_chain">Burp/ZAP (:8080)</button>
+    </div>
+    <p id="modeHint" class="hint">Direct browser traffic (no proxy).</p>
+  </section>
+
+  <section class="card">
+    <div class="field-row">
+      <label for="adapterSelect">Active Wi-Fi / LAN Adapter Binding (Fail-Closed)</label>
+      <select id="adapterSelect">
+        <option value="">Default OS Route (All Interfaces)</option>
+      </select>
+    </div>
+    <div class="field-grid">
+      <div>
+        <label for="gatewayType">Gateway Type</label>
+        <select id="gatewayType">
+          <option value="verizon_askey">Verizon 5G Home (192.168.1.1)</option>
+          <option value="xfinity">Xfinity Gateway (10.0.0.1)</option>
+          <option value="tmobile_tmi">T-Mobile 5G (192.168.12.1)</option>
+        </select>
+      </div>
+      <div>
+        <label for="gatewayHost">Gateway IP (RFC1918)</label>
+        <input id="gatewayHost" type="text" value="192.168.1.1">
+      </div>
+    </div>
+    <div class="field-grid">
+      <div>
+        <label for="gatewayPassword">Gateway Password (RAM-Only)</label>
+        <input id="gatewayPassword" type="password" placeholder="Session-only admin pw">
+      </div>
+      <div>
+        <label for="controlTokenInput">API Token (RAM-Only)</label>
+        <input id="controlTokenInput" type="password" placeholder="Optional X-Control-Token">
+      </div>
+    </div>
+    <div class="action-grid">
+      <button id="rotateBtn" type="button" class="btn-primary">Rotate 5G IP Now</button>
+      <button id="freshIdentityBtn" type="button" class="btn-amber" title="Rotates 5G WAN IP and clears cookies, localStorage, and cache for the active tab">1-Click Fresh Identity</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="field-grid">
+      <div>
+        <label for="autoRotateSelect">Auto-Rotate Timer</label>
+        <select id="autoRotateSelect">
+          <option value="0">Disabled (Manual)</option>
+          <option value="5">Every 5 Minutes</option>
+          <option value="15">Every 15 Minutes</option>
+          <option value="30">Every 30 Minutes</option>
+        </select>
+      </div>
+      <div>
+        <label for="controlUrlInput">Daemon API Host</label>
+        <input id="controlUrlInput" type="text" value="http://127.0.0.1:8889">
+      </div>
+    </div>
+    <div class="footer-actions">
+      <button id="exportAuditBtn" type="button" class="btn-secondary">Export SHA-256 Signed ROE Audit Log</button>
+    </div>
+  </section>
+
+  <pre id="outputLog" class="log-box" aria-live="polite">Ready.</pre>
+
+  <script src="popup.js"></script>
+</body>
+</html>

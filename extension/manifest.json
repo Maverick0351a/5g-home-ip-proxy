@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "5G Home Internet IP Rotator & Dual-WiFi Proxy Switcher",
+  "version": "1.4.0",
+  "description": "Rotate 5G Home gateway WAN IPs in 1 click, switch dual-WiFi adapters, lock WebRTC leaks, and chain local SOCKS5 or Burp/ZAP proxies.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "5G Home Internet IP Rotator & Proxy Switcher",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png"
+    }
+  },
+  "background": {
+    "service_worker": "service-worker.js"
+  },
+  "permissions": [
+    "proxy",
+    "privacy",
+    "storage",
+    "alarms",
+    "browsingData",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "http://127.0.0.1/*",
+    "http://localhost/*"
+  ]
+}

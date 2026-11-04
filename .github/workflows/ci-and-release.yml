@@ -1,0 +1,60 @@
+name: CI & Windows Standalone EXE + Chrome Extension Release
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["v*"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  unit-tests:
+    name: Run Offline Unit Tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run Unit Test Suite
+        run: python test_home_ip_proxy.py
+
+  build-windows-exe-and-extension:
+    name: Build Standalone Windows EXE & Chrome Extension ZIP
+    needs: unit-tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install PyInstaller
+        run: pip install pyinstaller
+      - name: Build Single-File Windows Executable (5g-home-ip-proxy.exe)
+        run: pyinstaller --onefile --name 5g-home-ip-proxy home_ip_proxy.py
+      - name: Package Chrome/Brave MV3 Extension ZIP
+        shell: pwsh
+        run: |
+          Compress-Archive -Path extension\* -DestinationPath dist\5g-home-ip-proxy-chrome-extension.zip -Force
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: 5g-home-ip-proxy-windows-bundle
+          path: |
+            dist/5g-home-ip-proxy.exe
+            dist/5g-home-ip-proxy-chrome-extension.zip
+      - name: Publish GitHub Release (on Tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/5g-home-ip-proxy.exe
+            dist/5g-home-ip-proxy-chrome-extension.zip
+          generate_release_notes: true
